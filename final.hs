@@ -16,12 +16,12 @@ countocc :: (Ord a) => [[a]] -> [([a],Float)]
 countocc xs = map (\x -> (head x, fromIntegral (length x))) $ group $ sort xs
 
 -- | Counts groups frequencies
-frequency :: Ord a => Int -> [a] -> [([a], Float)]
-frequency size xs =
-  let grps = grp size xs
-      occ = countocc grps
-      n = length grps in
-  map (\x -> (fst x, snd x / fromIntegral n)) (occ)
+--frequency :: Ord a => Int -> [a] -> [([a], Float)]
+--frequency size xs =
+--  let grps = grp size xs
+--      occ = countocc grps
+--      n = length grps in
+--  map (\x -> (fst x, snd x / fromIntegral n)) (occ)
 
 -- | Calculate one element of infomation summation
 infoelem :: Float -> Float -> Float
@@ -59,6 +59,9 @@ runAllSizes s = do
   processFile 1 s
   processFile 2 s
   processFile 3 s
+
+testReduce xs = let n = sum $ map (\x -> snd x) xs in
+              map (\x -> (fst (fst x), n))
 
 main = do
   s <- readFile "WarAndPeace.txt"

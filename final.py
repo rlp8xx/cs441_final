@@ -3,45 +3,61 @@ import functools
 import sys
 import cProfile
 
-# turns head of list into a dict
-# adds following tuples into the dict
-def reducer(a, b):
-    if type(a) is not dict:
-        return reducer({a[0]:a[1]},b)
+# Recursively group chraracters
+def group(size, chars):
+    if len(chars) < size:
+        return []
+    return [chars[0:size]] + group(size, chars[size:])
+
+# Insert or update chars in dic
+def add_to_dict(dic, chars):
+    if not dic:
+        dic = {}
+    if chars in dic.keys():
+        dic[chars] = dic[chars]+1
     else:
-        if b[0] in a.keys():
-            a[b[0]] = a[b[0]] + b[1]
+        dic[chars] = 1
+    return dic
+
+# Recursively count character groupings into a dict
+def count_groups(acc, groups):
+    if not groups:
+        return acc
+    acc = add_to_dict(acc, groups[0])
+    if len(groups) > 1:
+        return count_groups(acc, groups[1:])
+    else:
+        return acc
+
+# Split string into roughly `amt_chunks` pieces
+def chunk(chars, amt_chunks):
+    chunk_size = round(len(chars) / amt_chunks)
+    def _chunk(chars):
+        if len(chars) < chunk_size:
+            return [chars]
         else:
-            a[b[0]] = b[1]
-    return a
+            return [chars[0:chunk_size]] + _chunk(chars[chunk_size:])
+    return _chunk(chars)
 
-def reduce_dict(freq_dict):
-    n = len(freq_dict.keys())
-    def dict_reducer(a,b):
-        return 
+# Merge two frequency dicts together
+def freq_reduce(a, b):
+    def _freq_reduce(a, b):
+        item = b[0]
+        if item[0] in a:
+            a[item[0]] = a[item[0]] + item[1]
+        else:
+            a[item[0]] = item[1]
+        if len(b) > 1:
+            return _freq_reduce(a, b[1:])
+        else:
+            return a
+    if not b:
+        return a
+    return _freq_reduce(a, list(b.items())) 
 
-    reduced = functools.reduce(dict_reducer, freq_dict)
-
-def mapper(a):
-    return (a,1)
-
-def count_occurrences(data):
-    mapped = sorted(map(mapper, data))
-    reduced = functools.reduce(reducer, mapped)
-    return reduced
-
-def main(argv):
-    num_threads = int(argv[1])
-    filepath = argv[2]
-
-    with open(filepath, "r") as book:
-        mystr = book.read()
-
-    # split file into array of lines, remove empty lines
-    book_lines = [line for line in mystr.split("\n") if line]
-
-    with Pool(processes=num_threads) as pool:
-        occs = pool.map(count_occurrences, book_lines)
-    
-if __name__ == "__main__":
-    main(sys.argv)
+# Do all the processing
+def process(chars, amt_chunks):
+    chars = group(3, chars)
+    chunks = chunk(chars, amt_chunks)
+    mapped = map(lambda x: count_groups(None,x), chunks)
+    return functools.reduce(freq_reduce, mapped)

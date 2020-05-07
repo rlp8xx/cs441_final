@@ -72,7 +72,7 @@ time a = do
   v <- a
   end   <- getCPUTime
   let diff = (fromIntegral (end - start)) / (10^12)
-  printf "Computation time: %0.3f sec\n" (diff :: Double)
+  printf "Computation time: %0.3f\n" (diff :: Double)
   return v
 
 -- | Runs for singles, pairs, and triples

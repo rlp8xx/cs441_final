@@ -36,22 +36,15 @@ infoelem n total = let n' = fromIntegral n
                        p = n' / total'
                    in n' * (-p) * (log(p)/log(2))
 
--- | Calculate element-wise information in a frequency map
-infomap m = let n = fromIntegral $ sum $ Map.elems m
-             in fromList (List.map (\x -> (fst x, infoelem (snd x) n)) (Map.toList m))
-
 -- | Calculate element-wise information in frequency list
 parinfomapelem n m = List.map (\x -> infoelem (snd x) n) m
 
--- | 
+-- | Cut the counted groups into chunks and create spark for calculation of the information for each group
 parinfomap chunks m = let n = fromIntegral $ sum $ List.map (\x -> snd x) m
                in sum $ concat $ parMap rseq (\x -> parinfomapelem n x) (chunk chunks m)
 
 -- | Put chunks from parcnt back together into a Data.Map.Strict object
 chunkmap xs = fromListWith (+) (concat xs)
-
--- | Sum element-wise information in map
-suminfomap m = sum $ List.map (\x -> snd x) (toList $ infomap m)
 
 -- | Prints a float without scientific notation
 showFullPrecision :: Float -> String
@@ -84,4 +77,4 @@ runAllSizes chunks s = do
 main = do
   chunks <- fmap (read . head) getArgs :: IO Int
   s <- readFile "WarAndPeace.txt"
-  time $ runAllSizes chunks s
+  time $ runAllSizes 64 s

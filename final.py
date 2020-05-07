@@ -1,7 +1,10 @@
 from multiprocessing import Pool
 import functools
 import sys
-import cProfile
+import resource
+
+resource.setrlimit(resource.RLIMIT_STACK, [0x10000000, resource.RLIM_INFINITY])
+sys.setrecursionlimit(0x100000)
 
 # Recursively group chraracters
 def group(size, chars):
@@ -61,3 +64,8 @@ def process(chars, amt_chunks):
     chunks = chunk(chars, amt_chunks)
     mapped = map(lambda x: count_groups(None,x), chunks)
     return functools.reduce(freq_reduce, mapped)
+
+if __name__ == "__main__":
+    with open("WarAndPeace.txt", "r") as infile:
+        data = infile.read()
+    process(data, 4)

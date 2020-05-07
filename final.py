@@ -1,16 +1,11 @@
 from multiprocessing import Pool
+from collections import Counter
 import functools
 import sys
-import resource
-
-resource.setrlimit(resource.RLIMIT_STACK, [0x10000000, resource.RLIM_INFINITY])
-sys.setrecursionlimit(0x100000)
 
 # Recursively group chraracters
 def group(size, chars):
-    if len(chars) < size:
-        return []
-    return [chars[0:size]] + group(size, chars[size:])
+    return [chars[i:i+size] for i in range(0, len(chars), size)]
 
 # Insert or update chars in dic
 def add_to_dict(dic, chars):
@@ -22,50 +17,23 @@ def add_to_dict(dic, chars):
         dic[chars] = 1
     return dic
 
-# Recursively count character groupings into a dict
-def count_groups(acc, groups):
-    if not groups:
-        return acc
-    acc = add_to_dict(acc, groups[0])
-    if len(groups) > 1:
-        return count_groups(acc, groups[1:])
-    else:
-        return acc
-
 # Split string into roughly `amt_chunks` pieces
 def chunk(chars, amt_chunks):
     chunk_size = round(len(chars) / amt_chunks)
-    def _chunk(chars):
-        if len(chars) < chunk_size:
-            return [chars]
-        else:
-            return [chars[0:chunk_size]] + _chunk(chars[chunk_size:])
-    return _chunk(chars)
+    return group(chunk_size, chars)
 
 # Merge two frequency dicts together
 def freq_reduce(a, b):
-    def _freq_reduce(a, b):
-        item = b[0]
-        if item[0] in a:
-            a[item[0]] = a[item[0]] + item[1]
-        else:
-            a[item[0]] = item[1]
-        if len(b) > 1:
-            return _freq_reduce(a, b[1:])
-        else:
-            return a
-    if not b:
-        return a
-    return _freq_reduce(a, list(b.items())) 
+    return dict(Counter(a)+Counter(b))
 
-# Do all the processing
-def process(chars, amt_chunks):
-    chars = group(3, chars)
+# Use map and reduce to count character groups
+def count_groups(chars, amt_chunks, grp_size):
+    chars = group(grp_size, chars)
     chunks = chunk(chars, amt_chunks)
-    mapped = map(lambda x: count_groups(None,x), chunks)
+    mapped = map(lambda x: dict(Counter(x)), chunks)
     return functools.reduce(freq_reduce, mapped)
 
 if __name__ == "__main__":
     with open("WarAndPeace.txt", "r") as infile:
         data = infile.read()
-    process(data, 4)
+    print(count_groups(data, 4, 1))

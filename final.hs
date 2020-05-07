@@ -11,6 +11,15 @@ grp n xs =
     let (ys, zs) = splitAt n xs
     in  ys : grp n zs
 
+-- | Creates some amt of equal length chunks
+chunk :: Int -> [a] -> [[a]]
+chunk amt xs = let chunksize = round $ (fromIntegral (length xs)) / fromIntegral amt
+               in grp chunksize xs
+
+-- | Group and sort a string
+grpsort :: (Ord a) => Int -> [a] -> [[a]]
+grpsort size xs = sort $ grp size xs
+
 -- | Counts occurrences of element groups
 countocc :: (Ord a) => [[a]] -> [([a],Float)]
 countocc xs = map (\x -> (head x, fromIntegral (length x))) $ group $ sort xs

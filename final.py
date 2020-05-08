@@ -3,6 +3,7 @@ from collections import Counter
 import functools
 import math
 import sys
+import time
 
 # Recursively group chraracters
 def group(size, chars):
@@ -53,9 +54,10 @@ if __name__ == "__main__":
     with open("WarAndPeace.txt", "r") as infile:
         data = infile.read()
     threads = int(sys.argv[1])
+    stime = time.time()
     for size in [1,2,3]:
         # Count groups with 
         counted_groups = count_groups(data, threads, size)
         total_groups = sum(counted_groups.values())
         info = functools.reduce(lambda a, b: info_reduce(a,b,total_groups), counted_groups.values())
-        print(info)
+    print(time.time()-stime)

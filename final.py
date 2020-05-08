@@ -1,5 +1,6 @@
 from multiprocessing import Pool
 from collections import Counter
+import cProfile
 import functools
 import math
 import sys
@@ -42,13 +43,40 @@ def count_groups(chars, amt_threads, grp_size):
         mapped = pool.map(count, chunks)
     return functools.reduce(freq_reduce, mapped)
 
-# Reduce counted groups
+# Reduce counted groups into information
 def info_reduce(a, b, total):
     p = b / total
     if a is None:
-        return (-p) * b * math.log2(p)
+        return info_elem(b, total)
     else:
-        return a + (-p) * b * math.log2(p)
+        return a + info_elem(b, total)
+
+# Information of single piece of alphabet
+def info_elem(count, total):
+    p = count / total
+    return (-p) * count * math.log2(p)
+
+# Find information in chars with sized grouping
+def info(chars, size, threads):
+    counted_groups = count_groups(data, threads, size)
+    total_groups = sum(counted_groups.values())
+    amt_info = functools.reduce(lambda a, b: info_reduce(a,b,total_groups), counted_groups.values())
+    return amt_info
+
+def sum_reduce(a, b):
+    if a and b:
+        return a+b
+    else:
+        return b
+
+def _info(chars, size, threads):
+    counted_groups = count_groups(data, threads, size)
+    total_groups = sum(counted_groups.values())
+    map_func = functools.partial(info_elem, total=total_groups)
+    with Pool(processes=threads) as pool:
+        mapped = pool.map(map_func, counted_groups.values())
+    amt_info = functools.reduce(sum_reduce, mapped) 
+    return amt_info
 
 if __name__ == "__main__":
     with open("WarAndPeace.txt", "r") as infile:
@@ -56,8 +84,5 @@ if __name__ == "__main__":
     threads = int(sys.argv[1])
     stime = time.time()
     for size in [1,2,3]:
-        # Count groups with 
-        counted_groups = count_groups(data, threads, size)
-        total_groups = sum(counted_groups.values())
-        info = functools.reduce(lambda a, b: info_reduce(a,b,total_groups), counted_groups.values())
+        _info(data, size, threads)
     print(time.time()-stime)

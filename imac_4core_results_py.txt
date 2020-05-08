@@ -1,0 +1,28 @@
+Threads: 1, Trial: 0, Time: 3.4673988819122314
+Threads: 1, Trial: 1, Time: 3.4801132678985596
+Threads: 1, Trial: 2, Time: 3.63077974319458
+Average time over 3 trials for 1 threads is 3.526097297668457
+Threads: 2, Trial: 0, Time: 3.1322522163391113
+Threads: 2, Trial: 1, Time: 3.265765905380249
+Threads: 2, Trial: 2, Time: 3.2487759590148926
+Average time over 3 trials for 2 threads is 3.2155980269114175
+Threads: 4, Trial: 0, Time: 2.9111859798431396
+Threads: 4, Trial: 1, Time: 2.751967191696167
+Threads: 4, Trial: 2, Time: 2.7385659217834473
+Average time over 3 trials for 4 threads is 2.8005730311075845
+Threads: 8, Trial: 0, Time: 2.610135078430176
+Threads: 8, Trial: 1, Time: 2.6452600955963135
+Threads: 8, Trial: 2, Time: 2.736578941345215
+Average time over 3 trials for 8 threads is 2.663991371790568
+Threads: 16, Trial: 0, Time: 2.68115496635437
+Threads: 16, Trial: 1, Time: 2.755671977996826
+Threads: 16, Trial: 2, Time: 2.670041084289551
+Average time over 3 trials for 16 threads is 2.702289342880249
+Threads: 32, Trial: 0, Time: 3.1744320392608643
+Threads: 32, Trial: 1, Time: 3.4594430923461914
+Threads: 32, Trial: 2, Time: 3.6648237705230713
+Average time over 3 trials for 32 threads is 3.4328996340433755
+Threads: 64, Trial: 0, Time: 3.689282178878784
+Threads: 64, Trial: 1, Time: 4.127969026565552
+Threads: 64, Trial: 2, Time: 3.9583170413970947
+Average time over 3 trials for 64 threads is 3.92518941561381

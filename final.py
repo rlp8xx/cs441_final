@@ -57,6 +57,7 @@ def info_elem(count, total):
     return (-p) * count * math.log2(p)
 
 # Find information in chars with sized grouping
+# Uses reduce to finish  the information calculation
 def info(chars, size, threads):
     counted_groups = count_groups(data, threads, size)
     total_groups = sum(counted_groups.values())
@@ -69,6 +70,9 @@ def sum_reduce(a, b):
     else:
         return b
 
+# Find information in chars with sized grouping
+# Runs information calculation in parallel as well
+# Finishes with summation reduction
 def _info(chars, size, threads):
     counted_groups = count_groups(data, threads, size)
     total_groups = sum(counted_groups.values())

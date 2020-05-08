@@ -88,5 +88,5 @@ if __name__ == "__main__":
     threads = int(sys.argv[1])
     stime = time.time()
     for size in [1,2,3]:
-        _info(data, size, threads)
+        print("Information in groupings of size {}: {}".format(size, _info(data, size, threads)))
     print(time.time()-stime)
